@@ -1,12 +1,24 @@
 name: Hello World
 
 on:
-  push:
+  push
 
 jobs:
   hello:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Hello
-        run: echo "Hello Aketana"
+      - name: Hostname
+        run: hostname
+
+      - name: Current User
+        run: whoami
+
+      - name: Current Path
+        run: pwd
+
+      - name: OS Info
+        run: uname -a
+
+      - name: List Files
+        run: ls -la

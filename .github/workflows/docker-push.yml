@@ -22,6 +22,11 @@ jobs:
         run: |
           docker build -t ghcr.io/aketanar/demo-app:latest .
 
+      - name: Debug
+        run: |
+         echo "OWNER=${{ github.repository_owner }}"
+         echo "REPO=${{ github.repository }}"
+
       - name: Push Image
         run: |
           docker push ghcr.io/aketanar/demo-app:latest

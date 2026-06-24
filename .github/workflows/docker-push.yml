@@ -20,8 +20,8 @@ jobs:
 
       - name: Build Image
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/demo-app:latest .
+          docker build -t ghcr.io/aketanar/demo-app:latest .
 
       - name: Push Image
         run: |
-          docker push ghcr.io/${{ github.repository_owner }}/demo-app:latest
+          docker push ghcr.io/aketanar/demo-app:latest

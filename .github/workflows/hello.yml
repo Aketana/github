@@ -1,24 +1,22 @@
-name: Hello World
+name: Python Test
 
 on:
-  push
+  push:
 
 jobs:
-  hello:
+  python-test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Hostname
-        run: hostname
+      - uses: actions/checkout@v4
 
-      - name: Current User
-        run: whoami
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
 
-      - name: Current Path
-        run: pwd
+      - name: Check Python
+        run: python --version
 
-      - name: OS Info
-        run: uname -a
-
-      - name: List Files
-        run: ls -la
+      - name: Run App
+        run: python app.py

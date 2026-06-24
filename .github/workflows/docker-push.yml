@@ -18,9 +18,12 @@ jobs:
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      - name: Build Image
+
+          
+       - name: Build Image
         run: |
-          docker build -t ghcr.io/aketanar/demo-app:latest .
+            OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+            docker build -t ghcr.io/$OWNER/demo-app:latest .
 
       - name: Debug
         run: |
@@ -29,4 +32,5 @@ jobs:
 
       - name: Push Image
         run: |
-          docker push ghcr.io/aketanar/demo-app:latest
+            OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+            docker push ghcr.io/$OWNER/demo-app:latest

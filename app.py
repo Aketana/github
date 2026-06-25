@@ -31,5 +31,21 @@ def me():
         "job": "DevOps Learner",
         "lab": "GitHub Actions"
     }
+
+users = [
+        {"id": 1, "name": "Alice", "job": "Engineer"},
+        {"id": 2, "name": "Bob", "job": "Designer"},
+    ]  
+@app.route("/users/<int:id>")
+def get_users(id):
+    user = next((user for user in users if user["id"] == id), None)
+    if user:
+        return user
+    return {"error": "User not found"}, 404
+
+@app.route("/hello/<name>")
+def hello(name):
+    return f"Hello {name}"
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=5000)  

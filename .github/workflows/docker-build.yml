@@ -17,7 +17,7 @@ jobs:
         run: docker build -t demo-app .
 
       - name : Run Docker Container
-        run: docker run -d --name demo demo-app
+        run: docker run -d --name demo -p 5000:5000 demo-app
 
       - name: Wait
         run: sleep 5

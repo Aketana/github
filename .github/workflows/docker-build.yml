@@ -17,4 +17,13 @@ jobs:
         run: docker build -t demo-app .
 
       - name : Run Docker Container
-        run: docker run demo-app
+        run: docker run -d --name demo demo-app
+
+      - name: Wait
+        run: sleep 5
+
+      - name: Test API
+        run: curl http://localhost:5000/health
+
+      - name: Stop Container
+        run: docker stop demo

@@ -17,18 +17,25 @@ jobs:
       - name: Login GHCR
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-          
-      - name: Build Image
+
+      - name: Set Image Name
         run: |
           OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
-          docker build -t ghcr.io/$OWNER/demo-app:latest .
+          REPO=$(echo "${{ github.event.repository.name }}" | tr '[:upper:]' '[:lower:]')
+          echo "IMAGE=ghcr.io/$OWNER/$REPO" >> $GITHUB_ENV
+
+      - name: Build Image
+        run: |
+          docker build \
+            -t $IMAGE:latest \
+            -t $IMAGE:${{ github.sha }} \
+            .
 
       - name: Debug
         run: |
-         echo "OWNER=${{ github.repository_owner }}"
-         echo "REPO=${{ github.repository }}"
+          echo "IMAGE=$IMAGE"
 
       - name: Push Image
         run: |
-            OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
-            docker push ghcr.io/$OWNER/demo-app:latest
+          docker push $IMAGE:latest
+          docker push $IMAGE:${{ github.sha }}

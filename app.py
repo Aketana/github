@@ -43,6 +43,10 @@ def get_users(id):
         return user
     return {"error": "User not found"}, 404
 
+@app.route("/users")
+def get_all_users():
+    return users
+
 @app.route("/hello/<name>")
 def hello(name):
     return f"Hello {name}"

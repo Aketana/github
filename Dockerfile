@@ -4,7 +4,10 @@ WORKDIR /app
 
 COPY requirements.txt .
 
-RUN pip install -r requirements.txt
+RUN pip install \
+ --trusted-host pypi.org \
+ --trusted-host file.pythonhosted.org \
+ -r requirements.txt
 
 COPY app.py .
 

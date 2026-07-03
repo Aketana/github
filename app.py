@@ -1,4 +1,5 @@
 from flask import Flask
+from database import get_connection
 
 app = Flask(__name__)
 
@@ -32,20 +33,28 @@ def me():
         "lab": "GitHub Actions"
     }
 
-users = [
-        {"id": 1, "name": "Alice", "job": "Engineer"},
-        {"id": 2, "name": "Bob", "job": "Designer"},
-    ]  
-@app.route("/users/<int:id>")
-def get_users(id):
-    user = next((user for user in users if user["id"] == id), None)
-    if user:
-        return user
-    return {"error": "User not found"}, 404
-
 @app.route("/users")
 def get_all_users():
-    return users
+
+    conn = get_connection()
+
+    cur = conn.cursor()
+
+    cur.execute("SELECT id, name, job FROM users ORDER BY id")
+
+    rows = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    return [
+        {
+            "id": row[0],
+            "name": row[1],
+            "job": row[2]
+        }
+        for row in rows
+    ]
 
 @app.route("/hello/<name>")
 def hello(name):

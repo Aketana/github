@@ -9,6 +9,6 @@ RUN pip install \
  --trusted-host file.pythonhosted.org \
  -r requirements.txt
 
-COPY app.py .
+COPY . .
 
 CMD ["python", "app.py"]

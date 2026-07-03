@@ -71,6 +71,12 @@ jobs:
       - name: Run Docker Container
         run: docker run -d --name demo -p 5000:5000 demo-app
 
+      - name: Show Container Status
+        run: docker ps -a
+
+      - name: Show Container Logs
+        run: docker logs demo
+
       - name: Wait
         run: sleep 5
 

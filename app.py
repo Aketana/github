@@ -56,6 +56,33 @@ def get_all_users():
         for row in rows
     ]
 
+@app.route("/users/<int:id>")
+def get_user(id):
+
+    conn = get_connection()
+
+    cur = conn.cursor()
+
+    cur.execute(
+        "SELECT id, name, job FROM users WHERE id = %s",
+        (id,)
+    )
+
+    row = cur.fetchone()
+
+    cur.close()
+    conn.close()
+
+    if row is None:
+        return {"error": "User not found"}, 404
+
+    return {
+        "id": row[0],
+        "name": row[1],
+        "job": row[2]
+    }
+
+
 @app.route("/hello/<name>")
 def hello(name):
     return f"Hello {name}"

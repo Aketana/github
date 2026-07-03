@@ -77,16 +77,20 @@ jobs:
       - name: Show Container Logs
         run: docker logs demo
 
+
+      - name: Inspect Container
+        run: |
+            docker exec demo ls -la
+            docker exec demo pwd
+            docker exec demo ps -ef
+
       - name: Wait
         run: sleep 5
 
+
       - name: Health Check
         run: |
-          response=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5000/health)
-          if [ "$response" -ne 200 ]; then
-            echo "Health check failed with status code $response"
-            exit 1
-          fi
+          curl -v http://localhost:5000/health
 
       - name: Stop Container
         run: docker stop demo

@@ -51,3 +51,43 @@ def test_user_count():
     assert response.is_json
     assert response.json[0]["name"] == "Alice"
     assert response.json[1]["name"] == "Bob"
+
+def test_create_user():
+    response = client.post(
+        "/users",
+        json={
+            "name": "David",
+            "job": "Cloud Engineer"
+        }
+    )
+
+    assert response.status_code == 201
+    assert response.is_json
+    assert "id" in response.json
+
+def test_update_user():
+    response = client.put(
+        "/users/1",
+        json={
+            "name": "Alice Updated",
+            "job": "Senior Engineer"
+        }
+    )
+
+    assert response.status_code == 200
+    assert response.is_json
+    assert response.json["message"] == "User updated"
+
+def test_delete_user():
+    response = client.delete("/users/3")
+
+    assert response.status_code == 200
+    assert response.is_json
+    assert response.json["message"] == "User deleted"
+
+def test_delete_user_not_found():
+    response = client.delete("/users/999")
+
+    assert response.status_code == 404
+    assert response.is_json
+    assert response.json["error"] == "User not found"

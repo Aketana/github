@@ -1,280 +1,102 @@
-# GitHub Actions + Docker + GitHub Container Registry (GHCR) Lab
+# Flask CRUD API with Docker & GitHub Actions
 
-## Overview
+A simple REST API built with **Flask** and **PostgreSQL**, containerized with **Docker**, and automated using **GitHub Actions**.
 
-โปรเจกต์นี้เป็นการทดลองสร้าง CI/CD Pipeline เบื้องต้นด้วย GitHub Actions และ Docker โดยมีเป้าหมายเพื่อเรียนรู้กระบวนการ Build, Run และ Publish Docker Image ไปยัง GitHub Container Registry (GHCR)
+## 🚀 Tech Stack
 
-### Architecture
+- Python 3.12
+- Flask
+- PostgreSQL 17
+- Docker & Docker Compose
+- GitHub Actions
+- GitHub Container Registry (GHCR)
+- Pytest
 
-```text
-Developer
-    │
-    ▼
-Git Push
-    │
-    ▼
-GitHub Actions
-    │
-    ├── Build Docker Image
-    ├── Run Container
-    └── Push Image
-    │
-    ▼
-GitHub Container Registry (GHCR)
-    │
-    ▼
-Ubuntu Server
-    │
-    ▼
-Docker Pull & Run
+## 📦 Features
+
+- RESTful CRUD API
+- PostgreSQL Database Integration
+- Dockerized Application
+- Automated Testing with Pytest
+- CI/CD Pipeline with GitHub Actions
+- Docker Image Publishing to GHCR
+- Health Check Endpoint
+
+## 📚 API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/` | Home Page |
+| GET | `/health` | Health Check |
+| GET | `/about` | About |
+| GET | `/me` | Profile |
+| GET | `/users` | Get All Users |
+| GET | `/users/{id}` | Get User by ID |
+| POST | `/users` | Create User |
+| PUT | `/users/{id}` | Update User |
+| DELETE | `/users/{id}` | Delete User |
+
+## ▶️ Run Project
+
+Start the application:
+
+```bash
+docker-compose up -d
 ```
 
----
+Verify the application:
 
-## Objectives
+```bash
+curl http://localhost:5000/health
+```
 
-* เรียนรู้การใช้งาน Git และ GitHub Workflow
-* เรียนรู้ GitHub Actions Workflow
-* สร้าง Docker Image จาก Source Code
-* ทดสอบ Container บน GitHub Runner
-* Push Docker Image ไปยัง GitHub Container Registry (GHCR)
-* Pull และ Run Image จาก Ubuntu Server
-* เตรียมความพร้อมสำหรับ Kubernetes และ Cloud Native Deployment
+## 🧪 Run Tests
 
----
+```bash
+make test
+```
 
-## Project Structure
+or
+
+```bash
+docker-compose exec app python -m pytest -v
+```
+
+Current Result:
+
+```
+12 Tests Passed ✅
+```
+
+## 🚢 Deploy Latest Image
+
+```bash
+make deploy
+```
+
+## 📁 Project Structure
 
 ```text
-github/
+.
 ├── app.py
+├── database.py
 ├── Dockerfile
+├── docker-compose.yml
+├── Makefile
+├── requirements.txt
+├── database/
+│   └── init.sql
+├── tests/
+│   └── test_api.py
 └── .github/
     └── workflows/
-        ├── hello.yml
-        ├── docker-build.yml
-        └── docker-push.yml
 ```
 
----
-
-## Source Code
-
-### app.py
-
-```python
-print("Hello from Docker Container")
-```
-
----
-
-## Docker Configuration
-
-### Dockerfile
-
-```dockerfile
-FROM python:3.12
-
-WORKDIR /app
-
-COPY app.py .
-
-CMD ["python", "app.py"]
-```
-
----
-
-## GitHub Actions Workflow
-
-### Build Docker Image
-
-```yaml
-name: Docker Build
-
-on:
-  push:
-
-jobs:
-  docker:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Build Docker Image
-        run: docker build -t demo-app .
-```
-
----
-
-### Build and Run Container
-
-```yaml
-name: Docker Build and Run
-
-on:
-  push:
-
-jobs:
-  docker:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Build Docker Image
-        run: docker build -t demo-app .
-
-      - name: Run Docker Container
-        run: docker run demo-app
-```
-
-Expected Output:
-
-```text
-Hello from Docker Container
-```
-
----
-
-### Push Image to GitHub Container Registry
-
-```yaml
-name: Docker Push
-
-on:
-  push:
-
-jobs:
-  docker:
-    runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Login GHCR
-        run: |
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-
-      - name: Build Image
-        run: |
-          OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
-          docker build -t ghcr.io/$OWNER/demo-app:latest .
-
-      - name: Push Image
-        run: |
-          OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
-          docker push ghcr.io/$OWNER/demo-app:latest
-```
-
----
-
-## GitHub Container Registry
-
-Published Image:
-
-```text
-ghcr.io/aketana/demo-app:latest
-```
-
-Pull Image:
-
-```bash
-docker pull ghcr.io/aketana/demo-app:latest
-```
-
-Run Container:
-
-```bash
-docker run ghcr.io/aketana/demo-app:latest
-```
-
-Expected Output:
-
-```text
-Hello from Docker Container
-```
-
----
-
-## Ubuntu Validation
-
-Environment:
-
-* Hyper-V
-* Ubuntu Server
-* Docker Engine
-
-Verification:
-
-```bash
-docker pull ghcr.io/aketana/demo-app:latest
-
-docker run ghcr.io/aketana/demo-app:latest
-```
-
-Result:
-
-```text
-Hello from Docker Container
-```
-
-Successfully verified that the image built by GitHub Actions can be deployed and executed on an external Ubuntu environment.
-
----
-
-## Key Learnings
-
-### Git
-
-* git clone
-* git add
-* git commit
-* git push
-
-### GitHub Actions
-
-* Workflow Creation
-* Runner Execution
-* Build Automation
-
-### Docker
-
-* Dockerfile
-* Docker Build
-* Docker Run
-* Image Lifecycle
-
-### GitHub Container Registry
-
-* Container Image Storage
-* Image Distribution
-* Registry Authentication
-
-### Deployment Pipeline
-
-```text
-Code
-  ↓
-Git Push
-  ↓
-GitHub Actions
-  ↓
-Docker Build
-  ↓
-Docker Push (GHCR)
-  ↓
-Ubuntu Server
-  ↓
-Docker Pull
-  ↓
-Docker Run
-```
-
-## Conclusion
-
-This project demonstrates a complete beginner-to-intermediate CI/CD workflow using GitHub Actions, Docker, and GitHub Container Registry. The workflow successfully automates image build, validation, publication, and deployment to an Ubuntu environment, forming a foundation for future Kubernetes and Cloud Native implementations.
+## ✅ Project Status
+
+- ✔ CRUD API
+- ✔ PostgreSQL Integration
+- ✔ Docker & Docker Compose
+- ✔ GitHub Actions CI
+- ✔ GitHub Container Registry (GHCR)
+- ✔ Automated Testing (12/12 Passed)

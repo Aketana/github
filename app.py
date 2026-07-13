@@ -80,11 +80,42 @@ def create_user():
 
     return {"id": new_id}, 201
 
+@app.route("/users/<int:id>", methods=["PUT"])
+def update_user(id):
+    data = request.get_json()
+
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute(
+        """
+        UPDATE users
+        SET name = %s,
+            job = %s
+        WHERE id = %s
+        RETURNING id
+        """,
+        (data["name"], data["job"], id)
+    )
+
+    row = cur.fetchone()
+
+    conn.commit()
+
+    cur.close()
+    conn.close()
+
+    if row is None:
+        return {"error": "User not found"}, 404
+
+    return {"message": "User updated"}
+
+
+
 @app.route("/users/<int:id>")
 def get_user(id):
 
     conn = get_connection()
-
     cur = conn.cursor()
 
     cur.execute(

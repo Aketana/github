@@ -110,7 +110,32 @@ def update_user(id):
 
     return {"message": "User updated"}
 
+@app.route("/users/<int:id>", methods=["DELETE"])
+def delete_user(id):
 
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute(
+        """
+        DELETE FROM users
+        WHERE id = %s
+        RETURNING id
+        """,
+        (id,)
+    )
+
+    row = cur.fetchone()
+
+    conn.commit()
+
+    cur.close()
+    conn.close()
+
+    if row is None:
+        return {"error": "User not found"}, 404
+
+    return {"message": "User deleted"}
 
 @app.route("/users/<int:id>")
 def get_user(id):

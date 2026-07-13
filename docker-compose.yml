@@ -1,6 +1,6 @@
 services:
   app:
-    image: ghcr.io/aketana/lastest
+    image: ghcr.io/aketana/github:latest
     container_name: github-demo
     ports:
       - "5000:5000"

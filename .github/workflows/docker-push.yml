@@ -24,12 +24,23 @@ jobs:
           REPO=$(echo "${{ github.event.repository.name }}" | tr '[:upper:]' '[:lower:]')
           echo "IMAGE=ghcr.io/$OWNER/$REPO" >> $GITHUB_ENV
 
+      - name: Debug app.py
+        run: |
+          grep -n 'methods=\["PUT"\]' app.py
+          git rev-parse HEAD
+          sha256sum app.py
+
       - name: Build Image
         run: |
           docker build \
             -t $IMAGE:latest \
             -t $IMAGE:${{ github.sha }} \
             .
+
+      - name: Check image
+        run: |
+          docker run --rm $IMAGE:${{ github.sha }} \
+          grep -n 'methods=\["PUT"\]' /app/app.py
 
       - name: Debug
         run: |

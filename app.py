@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from database import get_connection
 
 app = Flask(__name__)
@@ -55,6 +55,30 @@ def get_all_users():
         }
         for row in rows
     ]
+
+@app.route("/users", methods=["POST"])
+def create_user():
+    data = request.get_json()
+
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute(
+        """
+        INSERT INTO users(name, job)
+        VALUES (%s, %s)
+        RETURNING id
+        """,
+        (data["name"], data["job"])
+    )
+
+    new_id = cur.fetchone()[0]
+    conn.commit()
+
+    cur.close()
+    conn.close()
+
+    return {"id": new_id}, 201
 
 @app.route("/users/<int:id>")
 def get_user(id):
